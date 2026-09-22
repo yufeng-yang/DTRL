@@ -1,0 +1,50 @@
+[
+  {
+    "task": "Pendulum",
+    "short_name": "Pendulum",
+    "without_deadline": {
+      "success_rate": 1.0,
+      "return_mean": -156.32505738902512,
+      "return_std": 70.0613810123053,
+      "hit_mean": 1.0,
+      "hit_std": 0.0,
+      "n": 100
+    }
+  },
+  {
+    "task": "Semicircle-Wide",
+    "short_name": "SC-Wide",
+    "without_deadline": {
+      "success_rate": 1.0,
+      "return_mean": 10.145138854534839,
+      "return_std": 0.002389619070549934,
+      "hit_mean": 1.0,
+      "hit_std": 0.0,
+      "n": 100
+    }
+  },
+  {
+    "task": "Semicircle-Narrow",
+    "short_name": "SC-Narrow",
+    "without_deadline": {
+      "success_rate": 1.0,
+      "return_mean": 10.089030807565749,
+      "return_std": 0.0013738770604558605,
+      "hit_mean": 1.0,
+      "hit_std": 0.0,
+      "n": 100
+    }
+  },
+  {
+    "task": "Unitree Go2 Sim",
+    "short_name": "Go2 Sim",
+    "without_deadline": {
+      "success_rate": 1.0,
+      "return_mean": 21.78083818100393,
+      "return_std": 0.0015014831051250416,
+      "hit_mean": 1.0,
+      "hit_std": 0.0,
+      "n": 100
+    }
+  }
+]

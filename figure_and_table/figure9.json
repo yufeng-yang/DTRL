@@ -1,0 +1,55 @@
+{
+  "tasks": [
+    "Pendulum",
+    "SC-Wide",
+    "SC-Narrow",
+    "Go2 Sim"
+  ],
+  "methods": [
+    {
+      "method": "MMS",
+      "inconsistency_mean": [
+        0.2456,
+        0.3776,
+        0.2538,
+        0.1074
+      ],
+      "inconsistency_std": [
+        0.1332,
+        0.0965,
+        0.1027,
+        0.0169
+      ]
+    },
+    {
+      "method": "DTRL-On",
+      "inconsistency_mean": [
+        0.0969,
+        0.1578,
+        0.3245,
+        0.1039
+      ],
+      "inconsistency_std": [
+        0.1163,
+        0.0609,
+        0.0868,
+        0.0158
+      ]
+    },
+    {
+      "method": "DTRL-Off",
+      "inconsistency_mean": [
+        0.0541,
+        0.1489,
+        0.0831,
+        0.0172
+      ],
+      "inconsistency_std": [
+        0.0706,
+        0.0855,
+        0.0491,
+        0.0035
+      ]
+    }
+  ]
+}

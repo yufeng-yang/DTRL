@@ -1,0 +1,5 @@
+name: sb3sg
+channels:
+  - defaults
+dependencies:
+  - python=3.10

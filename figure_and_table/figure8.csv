@@ -1,0 +1,4 @@
+task,method,success_rate,return_mean,return_std,hit_mean,hit_std
+Semicircle-Narrow,SWI,0.01,6.1282,1.1198,0.9724,0.0202
+Semicircle-Narrow,DTRL-On E1,0.18,-7.462080254328462,7.340198243172981,0.9521522025479503,0.047172955647457986
+Semicircle-Narrow,DTRL-On,0.98,7.4655,0.6379,0.9165,0.0356

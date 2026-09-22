@@ -1,0 +1,13 @@
+task,short_name,method,inconsistency_mean,inconsistency_std
+Pendulum,Pendulum,MMS,0.2456,0.1332
+Pendulum,Pendulum,DTRL-On,0.0969,0.1163
+Pendulum,Pendulum,DTRL-Off,0.0541,0.0706
+Semicircle-Wide,SC-Wide,MMS,0.3776,0.0965
+Semicircle-Wide,SC-Wide,DTRL-On,0.1578,0.0609
+Semicircle-Wide,SC-Wide,DTRL-Off,0.1489,0.0855
+Semicircle-Narrow,SC-Narrow,MMS,0.2538,0.1027
+Semicircle-Narrow,SC-Narrow,DTRL-On,0.3245,0.0868
+Semicircle-Narrow,SC-Narrow,DTRL-Off,0.0831,0.0491
+Unitree Go2 Sim,Go2 Sim,MMS,0.1074,0.0169
+Unitree Go2 Sim,Go2 Sim,DTRL-On,0.1039,0.0158
+Unitree Go2 Sim,Go2 Sim,DTRL-Off,0.0172,0.0035

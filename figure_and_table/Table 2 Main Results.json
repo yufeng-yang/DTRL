@@ -1,0 +1,222 @@
+[
+  {
+    "task": "Pendulum",
+    "method": "Full",
+    "return_mean": -1068.975,
+    "return_std": 228.9945,
+    "hit_mean": 0.1453,
+    "hit_std": 0.0625,
+    "success_rate": 0.0,
+    "inconsistency_mean": null,
+    "inconsistency_std": null
+  },
+  {
+    "task": "Pendulum",
+    "method": "SWI",
+    "return_mean": -281.2832,
+    "return_std": 136.9768,
+    "hit_mean": 0.9949,
+    "hit_std": 0.0011,
+    "success_rate": 0.8,
+    "inconsistency_mean": null,
+    "inconsistency_std": null
+  },
+  {
+    "task": "Pendulum",
+    "method": "MMS",
+    "return_mean": -256.9237,
+    "return_std": 120.6253,
+    "hit_mean": 0.9731,
+    "hit_std": 0.0216,
+    "success_rate": 0.88,
+    "inconsistency_mean": 0.2456,
+    "inconsistency_std": 0.1332
+  },
+  {
+    "task": "Pendulum",
+    "method": "DTRL-On",
+    "return_mean": -159.6985,
+    "return_std": 76.6918,
+    "hit_mean": 0.9362,
+    "hit_std": 0.0208,
+    "success_rate": 1.0,
+    "inconsistency_mean": 0.0969,
+    "inconsistency_std": 0.1163
+  },
+  {
+    "task": "Pendulum",
+    "method": "DTRL-Off",
+    "return_mean": -174.3879,
+    "return_std": 89.5566,
+    "hit_mean": 0.8306,
+    "hit_std": 0.058,
+    "success_rate": 0.97,
+    "inconsistency_mean": 0.0541,
+    "inconsistency_std": 0.0706
+  },
+  {
+    "task": "Semicircle-Wide",
+    "method": "Full",
+    "return_mean": 5.2171,
+    "return_std": 9.0441,
+    "hit_mean": 0.3978,
+    "hit_std": 0.1225,
+    "success_rate": 0.6,
+    "inconsistency_mean": null,
+    "inconsistency_std": null
+  },
+  {
+    "task": "Semicircle-Wide",
+    "method": "SWI",
+    "return_mean": 9.3,
+    "return_std": 0.0237,
+    "hit_mean": 0.9845,
+    "hit_std": 0.016,
+    "success_rate": 1.0,
+    "inconsistency_mean": null,
+    "inconsistency_std": null
+  },
+  {
+    "task": "Semicircle-Wide",
+    "method": "MMS",
+    "return_mean": 9.5202,
+    "return_std": 0.2365,
+    "hit_mean": 0.9389,
+    "hit_std": 0.0294,
+    "success_rate": 0.97,
+    "inconsistency_mean": 0.3776,
+    "inconsistency_std": 0.0965
+  },
+  {
+    "task": "Semicircle-Wide",
+    "method": "DTRL-On",
+    "return_mean": 10.1745,
+    "return_std": 0.0034,
+    "hit_mean": 0.9493,
+    "hit_std": 0.0234,
+    "success_rate": 1.0,
+    "inconsistency_mean": 0.1578,
+    "inconsistency_std": 0.0609
+  },
+  {
+    "task": "Semicircle-Wide",
+    "method": "DTRL-Off",
+    "return_mean": 9.9864,
+    "return_std": 0.0101,
+    "hit_mean": 0.9223,
+    "hit_std": 0.0465,
+    "success_rate": 1.0,
+    "inconsistency_mean": 0.1489,
+    "inconsistency_std": 0.0855
+  },
+  {
+    "task": "Semicircle-Narrow",
+    "method": "Full",
+    "return_mean": -24.4409,
+    "return_std": 32.8567,
+    "hit_mean": 0.2611,
+    "hit_std": 0.0818,
+    "success_rate": 0.15,
+    "inconsistency_mean": null,
+    "inconsistency_std": null
+  },
+  {
+    "task": "Semicircle-Narrow",
+    "method": "SWI",
+    "return_mean": 6.1282,
+    "return_std": 1.1198,
+    "hit_mean": 0.9724,
+    "hit_std": 0.0202,
+    "success_rate": 0.01,
+    "inconsistency_mean": null,
+    "inconsistency_std": null
+  },
+  {
+    "task": "Semicircle-Narrow",
+    "method": "MMS",
+    "return_mean": 6.5561,
+    "return_std": 2.0046,
+    "hit_mean": 0.8956,
+    "hit_std": 0.0409,
+    "success_rate": 0.2,
+    "inconsistency_mean": 0.2538,
+    "inconsistency_std": 0.1027
+  },
+  {
+    "task": "Semicircle-Narrow",
+    "method": "DTRL-On",
+    "return_mean": 7.4655,
+    "return_std": 0.6379,
+    "hit_mean": 0.9165,
+    "hit_std": 0.0356,
+    "success_rate": 0.98,
+    "inconsistency_mean": 0.3245,
+    "inconsistency_std": 0.0868
+  },
+  {
+    "task": "Semicircle-Narrow",
+    "method": "DTRL-Off",
+    "return_mean": 9.9993,
+    "return_std": 0.0059,
+    "hit_mean": 0.8626,
+    "hit_std": 0.0652,
+    "success_rate": 1.0,
+    "inconsistency_mean": 0.0831,
+    "inconsistency_std": 0.0491
+  },
+  {
+    "task": "Unitree Go2 Sim",
+    "method": "Full",
+    "return_mean": -0.1318,
+    "return_std": 0.1326,
+    "hit_mean": 0.1796,
+    "hit_std": 0.1581,
+    "success_rate": 0.0,
+    "inconsistency_mean": null,
+    "inconsistency_std": null
+  },
+  {
+    "task": "Unitree Go2 Sim",
+    "method": "SWI",
+    "return_mean": 19.7569,
+    "return_std": 0.0308,
+    "hit_mean": 0.9866,
+    "hit_std": 0.0045,
+    "success_rate": 0.0,
+    "inconsistency_mean": null,
+    "inconsistency_std": null
+  },
+  {
+    "task": "Unitree Go2 Sim",
+    "method": "MMS",
+    "return_mean": 19.5362,
+    "return_std": 2.812,
+    "hit_mean": 0.9676,
+    "hit_std": 0.0522,
+    "success_rate": 0.64,
+    "inconsistency_mean": 0.1074,
+    "inconsistency_std": 0.0169
+  },
+  {
+    "task": "Unitree Go2 Sim",
+    "method": "DTRL-On",
+    "return_mean": 19.5122,
+    "return_std": 2.6734,
+    "hit_mean": 0.9642,
+    "hit_std": 0.0778,
+    "success_rate": 0.94,
+    "inconsistency_mean": 0.1039,
+    "inconsistency_std": 0.0158
+  },
+  {
+    "task": "Unitree Go2 Sim",
+    "method": "DTRL-Off",
+    "return_mean": 19.2044,
+    "return_std": 2.6937,
+    "hit_mean": 0.8485,
+    "hit_std": 0.1258,
+    "success_rate": 0.87,
+    "inconsistency_mean": 0.0172,
+    "inconsistency_std": 0.0035
+  }
+]

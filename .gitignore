@@ -1,0 +1,34 @@
+# Python
+__pycache__/
+*.py[cod]
+*.so
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Environments and local configuration
+.venv/
+venv/
+env/
+.env
+.vscode/
+.idea/
+
+# Training output
+runs/
+logs/
+wandb/
+new_trained_checkpoint/
+*.pkl
+!checkpoints/**/cfgs.pkl
+*.ckpt
+events.out.tfevents.*
+
+# Figure 10 uses two released TensorBoard event files.
+!Src_Training/Ablation Study/Full-Exit Warm-up/runs/
+!Src_Training/Ablation Study/Full-Exit Warm-up/runs/**/
+!Src_Training/Ablation Study/Full-Exit Warm-up/runs/**/events.out.tfevents.*
+
+# Platform files
+.DS_Store
+Thumbs.db

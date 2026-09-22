@@ -1,0 +1,214 @@
+diff --git a/configs/agent/flashSAC.yaml b/configs/agent/flashSAC.yaml
+index c584cf2..d231609 100755
+--- a/configs/agent/flashSAC.yaml
++++ b/configs/agent/flashSAC.yaml
+@@ -29,6 +29,9 @@ learning_rate_decay_step: ${eval:'int(${agent.learning_rate_decay_rate} *
+ 
+ actor_num_blocks: 2
+ actor_hidden_dim: 128
++# Optional explicit actor MLP widths, e.g. [512, 256, 128, 128].
++# If null/empty, fallback to actor_hidden_dim + actor_num_blocks (original FlashSAC actor).
++actor_hidden_dims: null
+ actor_bc_alpha: 0.0
+ actor_noise_zeta_mu: 2.0
+ actor_noise_zeta_max: 16
+diff --git a/flash_rl/agents/__init__.py b/flash_rl/agents/__init__.py
+index 8dcd468..80413be 100755
+--- a/flash_rl/agents/__init__.py
++++ b/flash_rl/agents/__init__.py
+@@ -37,6 +37,15 @@ def create_agent(
+         config = FlashSACConfig(**cfg_dict)  # type: ignore
+         agent = FlashSACAgent(observation_space, action_space, env_info, config)
+ 
++    elif agent_type == "flashSAC_eenn":
++        from flash_rl.agents.flashSAC.eenn_agent import (
++            FlashSACEENNAgent,
++            FlashSACEENNConfig,
++        )
++
++        config = FlashSACEENNConfig(**cfg_dict)  # type: ignore
++        agent = FlashSACEENNAgent(observation_space, action_space, env_info, config)
++
+     else:
+         raise NotImplementedError
+ 
+diff --git a/flash_rl/agents/flashSAC/agent.py b/flash_rl/agents/flashSAC/agent.py
+index 254e6f5..a3fcd87 100644
+--- a/flash_rl/agents/flashSAC/agent.py
++++ b/flash_rl/agents/flashSAC/agent.py
+@@ -12,6 +12,7 @@ from flash_rl.agents.base_agent import BaseAgent
+ from flash_rl.agents.flashSAC.network import (
+     FlashSACActor,
+     FlashSACDoubleCritic,
++    FlashSACMLPActor,
+     FlashSACTemperature,
+ )
+ from flash_rl.agents.flashSAC.update import (
+@@ -51,6 +52,7 @@ class FlashSACConfig:
+ 
+     actor_num_blocks: int
+     actor_hidden_dim: int
++    actor_hidden_dims: Optional[list[int]]
+     actor_bc_alpha: float
+     actor_noise_zeta_mu: float
+     actor_noise_zeta_max: int
+@@ -95,12 +97,19 @@ def _init_flashsac_networks(
+     )
+ 
+     # Initialize actor
+-    actor_net = FlashSACActor(
+-        num_blocks=cfg.actor_num_blocks,
+-        input_dim=actor_observation_dim,
+-        hidden_dim=cfg.actor_hidden_dim,
+-        action_dim=action_dim,
+-    ).to(device)
++    if cfg.actor_hidden_dims is not None and len(cfg.actor_hidden_dims) > 0:
++        actor_net = FlashSACMLPActor(
++            input_dim=actor_observation_dim,
++            hidden_dims=cfg.actor_hidden_dims,
++            action_dim=action_dim,
++        ).to(device)
++    else:
++        actor_net = FlashSACActor(
++            num_blocks=cfg.actor_num_blocks,
++            input_dim=actor_observation_dim,
++            hidden_dim=cfg.actor_hidden_dim,
++            action_dim=action_dim,
++        ).to(device)
+ 
+     use_fused = device.type == "cuda" and torch.cuda.is_available()
+     actor_optimizer = optim.Adam(actor_net.parameters(), lr=cfg.learning_rate_peak, fused=use_fused)
+diff --git a/flash_rl/agents/flashSAC/network.py b/flash_rl/agents/flashSAC/network.py
+index 7ce086d..5a43ed1 100644
+--- a/flash_rl/agents/flashSAC/network.py
++++ b/flash_rl/agents/flashSAC/network.py
+@@ -56,6 +56,53 @@ class FlashSACActor(nn.Module):
+         return actions, info
+ 
+ 
++class FlashSACMLPActor(nn.Module):
++    """
++    Configurable MLP actor trunk:
++    obs -> hidden_dims[0] -> ... -> hidden_dims[-1] -> policy head.
++    """
++
++    def __init__(
++        self,
++        input_dim: int,
++        hidden_dims: list[int],
++        action_dim: int,
++    ):
++        super().__init__()
++        if len(hidden_dims) == 0:
++            raise ValueError("hidden_dims must be non-empty for FlashSACMLPActor")
++
++        layers: list[nn.Module] = []
++        d_in = input_dim
++        for d_out in hidden_dims:
++            layers.append(nn.Linear(d_in, d_out))
++            layers.append(nn.ReLU(inplace=True))
++            d_in = d_out
++        self.trunk = nn.Sequential(*layers)
++        self.post_norm = UnitRMSNorm(d_in)
++        self.predictor = NormalTanhPolicy(hidden_dim=d_in, action_dim=action_dim)
++
++    def get_mean_and_std(
++        self,
++        observations: torch.Tensor,
++        training: bool,
++    ) -> tuple[torch.Tensor, torch.Tensor]:
++        x = self.trunk(observations)
++        x = self.post_norm(x)
++        mean, std = self.predictor.get_mean_and_std(x, training)
++        return mean, std
++
++    def forward(
++        self,
++        observations: torch.Tensor,
++        training: bool,
++    ) -> tuple[torch.Tensor, dict[str, torch.Tensor]]:
++        x = self.trunk(observations)
++        x = self.post_norm(x)
++        actions, info = self.predictor(x, training)
++        return actions, info
++
++
+ class FlashSACDoubleCritic(nn.Module):
+     """
+     Double-Q for Clipped Double Q-learning.
+diff --git a/flash_rl/envs/genesis_envs/go2_walk_easy.py b/flash_rl/envs/genesis_envs/go2_walk_easy.py
+index ff31f06..5fa71d8 100644
+--- a/flash_rl/envs/genesis_envs/go2_walk_easy.py
++++ b/flash_rl/envs/genesis_envs/go2_walk_easy.py
+@@ -303,7 +303,17 @@ class Go2WalkEasyEnv:
+         return torch.square(self.base_pos[:, 2] - self.reward_cfg["base_height_target"])
+ 
+ 
+-def get_cfgs():
++# Default task: fixed vx=0.5 m/s straight (aligned with unitree_go2 joint/full FlashSAC)
++DEFAULT_CMD_VX = 0.5
++DEFAULT_CMD_VY = 0.0
++DEFAULT_CMD_YAW = 0.0
++
++
++def get_cfgs(
++    cmd_vx: float = DEFAULT_CMD_VX,
++    cmd_vy: float = DEFAULT_CMD_VY,
++    cmd_yaw: float = DEFAULT_CMD_YAW,
++):
+     env_cfg = {
+         "num_actions": 12,
+         # joint/link names
+@@ -375,20 +385,26 @@ def get_cfgs():
+     }
+     command_cfg = {
+         "num_commands": 3,
+-        "lin_vel_x_range": [0.5, 0.5],
+-        "lin_vel_y_range": [0, 0],
+-        "ang_vel_range": [0, 0],
++        "lin_vel_x_range": [cmd_vx, cmd_vx],
++        "lin_vel_y_range": [cmd_vy, cmd_vy],
++        "ang_vel_range": [cmd_yaw, cmd_yaw],
+     }
+ 
+     return env_cfg, obs_cfg, reward_cfg, command_cfg
+ 
+ 
+ def get_env(num_envs: int) -> Go2WalkEasyEnv:
++    import os
++
++    cmd_vx = float(os.environ.get("GO2_WALK_EASY_CMD_VX", DEFAULT_CMD_VX))
++    cmd_vy = float(os.environ.get("GO2_WALK_EASY_CMD_VY", DEFAULT_CMD_VY))
++    cmd_yaw = float(os.environ.get("GO2_WALK_EASY_CMD_YAW", DEFAULT_CMD_YAW))
++
+     try:
+         gs.init(logging_level="warning")
+     except Exception as e:
+         print(e)
+-    env_cfg, obs_cfg, reward_cfg, command_cfg = get_cfgs()
++    env_cfg, obs_cfg, reward_cfg, command_cfg = get_cfgs(cmd_vx, cmd_vy, cmd_yaw)
+     env = Go2WalkEasyEnv(
+         num_envs=num_envs,
+         env_cfg=env_cfg,
+diff --git a/train.py b/train.py
+index ae97948..1a2359e 100755
+--- a/train.py
++++ b/train.py
+@@ -158,6 +158,17 @@ def run(args: argparse.Namespace) -> None:
+                 logger.update_metric(**update_info)
+                 update_counter -= 1
+ 
++            if hasattr(agent, "try_save_efull_warmup_snapshot"):
++                playback_dir = os.path.join(os.path.dirname(save_path_base), "playback")
++                snap_info = agent.try_save_efull_warmup_snapshot(  # type: ignore[attr-defined]
++                    save_path_base=save_path_base,
++                    env_name=str(cfg.env.env_name),
++                    rescale_action=bool(cfg.env.rescale_action),
++                    playback_dir=playback_dir,
++                )
++                if snap_info:
++                    logger.update_metric(**snap_info)
++
+             # evaluation
+             if cfg.evaluation_per_interaction_step and interaction_step % cfg.evaluation_per_interaction_step == 0:
+                 eval_info = evaluate(agent, eval_env, cfg.num_eval_episodes, cfg.env.env_type)

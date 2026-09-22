@@ -1,0 +1,213 @@
+"""OWF (SAC shallow policy obs→128→out) formal evaluation: same forward timing segment as e1 (tanh + unscale, without SB3 predict).
+
+Weight: b2_owf SWI_80000_steps.zip actor (latent_pi + mu).
+Rules are consistent with full_evaluation / dtrl_off_evaluation.
+
+Run: python SWI_evaluation.py"""
+
+from __future__ import annotations
+
+import os
+import sys
+import time
+from dataclasses import dataclass
+from pathlib import Path
+
+import gymnasium as gym
+import numpy as np
+import torch
+import torch.nn as nn
+from gymnasium import spaces
+from stable_baselines3 import SAC
+
+_DTRL = Path(__file__).resolve().parent.parent / "DTRL-Off"
+sys.path.insert(0, str(_DTRL))
+
+from action_utils import unscale_action  # noqa: E402
+
+MODEL_ZIP = Path(
+"/home/yufeng.yang/codespace/Prepare_to_transfer/src_training/Pendulum/SWI/runs/SWI_20260510_162815/weights/SWI_80000_steps.zip"
+)
+ENV_ID = "Pendulum-v1"
+CPU_CORE = 2
+WARMUP_STEPS = 200
+N_SEEDS = 100
+START_SEED = 42
+DECISION_INTERVAL = 10
+DEADLINE_LOW_MS = 0.05
+DEADLINE_HIGH_MS = 0.072
+ANGLE_ERR_THRESH = 0.032 * np.pi
+OMEGA_THRESH = 1.0
+
+
+class OwfActor(nn.Module):
+    """Consistent with SB3 SAC pi=[128]: obs → 128 → action mean."""
+
+    def __init__(self, sac_actor: nn.Module) -> None:
+        super().__init__()
+        self.fc1 = sac_actor.latent_pi[0]  # Linear(obs, 128)
+        self.mean = sac_actor.mu
+
+    def forward(self, obs: torch.Tensor) -> torch.Tensor:
+        h = torch.relu(self.fc1(obs))
+        return self.mean(h)
+
+
+@dataclass
+class EpisodeStats:
+    seed: int
+    return_: float
+    n_steps: int
+    deadline_hits: int
+    success: bool
+
+
+def _setup_cpu() -> None:
+    if hasattr(os, "sched_setaffinity"):
+        os.sched_setaffinity(0, {CPU_CORE})
+        print(f"[cpu] bind core {CPU_CORE}，affinity={sorted(os.sched_getaffinity(0))}")
+    torch.set_num_threads(1)
+    try:
+        torch.set_num_interop_threads(1)
+    except RuntimeError:
+        pass
+
+
+def _build_owf_actor(model_zip: Path) -> tuple[OwfActor, str]:
+    sac = SAC.load(str(model_zip), device="cpu")
+    actor = OwfActor(sac.policy.actor).eval()
+    env_id = sac.env.spec.id if sac.env is not None and hasattr(sac.env, "spec") else ENV_ID
+    del sac
+    return actor, env_id
+
+
+def _infer(actor: OwfActor, obs: np.ndarray) -> np.ndarray:
+    x = torch.as_tensor(obs, dtype=torch.float32).unsqueeze(0)
+    return torch.tanh(actor(x)).detach().numpy().flatten()
+
+
+def _timed_infer(
+    actor: OwfActor, obs: np.ndarray, action_space: spaces.Box
+) -> tuple[np.ndarray, float]:
+    t0 = time.perf_counter()
+    with torch.inference_mode():
+        action = unscale_action(_infer(actor, obs), action_space)
+    return action, (time.perf_counter() - t0) * 1e3
+
+
+def _obs_balanced(obs: np.ndarray) -> bool:
+    theta = float(np.arctan2(obs[1], obs[0]))
+    return abs(theta) <= ANGLE_ERR_THRESH and abs(float(obs[2])) <= OMEGA_THRESH
+
+
+def _episode_success(step_balanced: list[bool]) -> bool:
+    n = len(step_balanced)
+    return n > 0 and all(step_balanced[n // 2 :])
+
+
+def _sample_deadline_ms(rng: np.random.Generator) -> float:
+    return float(rng.uniform(DEADLINE_LOW_MS, DEADLINE_HIGH_MS))
+
+
+def _warmup(actor: OwfActor, obs_dim: int, action_space: spaces.Box) -> None:
+    z = np.zeros(obs_dim, dtype=np.float32)
+    for _ in range(WARMUP_STEPS):
+        _timed_infer(actor, z, action_space)
+    print(f"  [owf] warmup {WARMUP_STEPS} times forward (e1 same timing)")
+
+
+def _run_episode(
+    actor: OwfActor, action_space: spaces.Box, seed: int
+) -> EpisodeStats:
+    env = gym.make(ENV_ID)
+    rng = np.random.default_rng(seed)
+    obs, _ = env.reset(seed=seed)
+
+    ep_ret = 0.0
+    step = 0
+    hits = 0
+    step_balanced: list[bool] = []
+    deadline_ms = DEADLINE_HIGH_MS
+    last_action: np.ndarray | None = None
+    done = False
+
+    while not done:
+        if step % DECISION_INTERVAL == 0:
+            deadline_ms = _sample_deadline_ms(rng)
+
+        new_action, lat_ms = _timed_infer(actor, obs, action_space)
+        if lat_ms <= deadline_ms:
+            hits += 1
+            action = new_action
+            last_action = action
+        elif last_action is not None:
+            action = last_action
+        else:
+            action = new_action
+            last_action = action
+
+        obs, reward, terminated, truncated, _ = env.step(action)
+        ep_ret += float(reward)
+        step_balanced.append(_obs_balanced(obs))
+        done = bool(terminated or truncated)
+        step += 1
+
+    env.close()
+    return EpisodeStats(
+        seed=seed,
+        return_=ep_ret,
+        n_steps=step,
+        deadline_hits=hits,
+        success=_episode_success(step_balanced),
+    )
+
+
+def main() -> None:
+    if not MODEL_ZIP.is_file():
+        raise SystemExit(f"Not found: {MODEL_ZIP}")
+
+    _setup_cpu()
+    actor, env_id = _build_owf_actor(MODEL_ZIP)
+
+    env = gym.make(env_id)
+    obs_dim = int(np.prod(env.observation_space.shape))
+    act_space = env.action_space
+    assert isinstance(act_space, spaces.Box)
+    env.close()
+
+    print(f"Strategy: OWF SAC Shallow (obs→128→out)\nWeight: {MODEL_ZIP}")
+    print(
+        f"Forward mode: Same as e1 (tanh(mean)+unscale, not predict)\n"
+        f"deadline∈[{DEADLINE_LOW_MS},{DEADLINE_HIGH_MS}] ms | every{DECISION_INTERVAL} step | "
+        f"miss→previous step | seeds {START_SEED}..{START_SEED + N_SEEDS - 1}"
+    )
+    print("\nPreheat:")
+    _warmup(actor, obs_dim, act_space)
+
+    seeds = list(range(START_SEED, START_SEED + N_SEEDS))
+    results: list[EpisodeStats] = []
+    print("\nFormal evaluation:")
+    for seed in seeds:
+        st = _run_episode(actor, act_space, seed)
+        hit_rate = st.deadline_hits / max(st.n_steps, 1)
+        results.append(st)
+        print(
+            f"  seed={seed} return={st.return_:.4f} steps={st.n_steps} "
+            f"hit_rate={hit_rate:.4f} success={st.success}"
+        )
+
+    rets = np.array([r.return_ for r in results], dtype=np.float64)
+    hit_rates = np.array(
+        [r.deadline_hits / max(r.n_steps, 1) for r in results], dtype=np.float64
+    )
+    success_rate = float(np.mean([r.success for r in results]))
+
+    print(f"\n{'=' * 70}")
+    print(f"comprehensive ({N_SEEDS} seeds) — OWF / SWI:")
+    print(f"  mean return     = {rets.mean():.4f} ± {rets.std(ddof=0):.4f}")
+    print(f"  mean hit rate   = {hit_rates.mean():.4f} ± {hit_rates.std(ddof=0):.4f}")
+    print(f"  success rate    = {success_rate:.4f} ({sum(r.success for r in results)}/{N_SEEDS})")
+
+
+if __name__ == "__main__":
+    main()

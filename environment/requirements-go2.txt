@@ -1,0 +1,5 @@
+# DTRL Unitree Go2 evaluation dependencies (Python 3.13)
+numpy==2.4.3
+torch==2.11.0
+genesis-world==0.4.6
+

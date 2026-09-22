@@ -1,0 +1,25 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite the RTSS 2026 paper."
+title: "DTRL: Reinforcement Learning Framework for Cyber-Physical Systems with Dynamic Time Requirements"
+type: software
+authors:
+  - family-names: Yang
+    given-names: Yufeng
+  - family-names: Shen
+    given-names: Dacheng
+  - family-names: Liu
+    given-names: Mengyu
+date-released: 2026-09-21
+preferred-citation:
+  type: conference-paper
+  title: "DTRL: Reinforcement Learning Framework for Cyber-Physical Systems with Dynamic Time Requirements"
+  authors:
+    - family-names: Yang
+      given-names: Yufeng
+    - family-names: Shen
+      given-names: Dacheng
+    - family-names: Liu
+      given-names: Mengyu
+  collection-title: "Proceedings of the 47th IEEE Real-Time Systems Symposium"
+  year: 2026
+

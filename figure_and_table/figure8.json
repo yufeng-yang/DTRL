@@ -1,0 +1,36 @@
+{
+  "task": "Semicircle-Narrow",
+  "budget_ms": [
+    0.13448591882479385,
+    0.21337656020477877
+  ],
+  "methods": [
+    {
+      "method": "SWI",
+      "success_rate": 0.01,
+      "return_mean": 6.1282,
+      "return_std": 1.1198,
+      "hit_mean": 0.9724,
+      "hit_std": 0.0202,
+      "n": 100
+    },
+    {
+      "method": "DTRL-On E1",
+      "success_rate": 0.18,
+      "return_mean": -7.462080254328462,
+      "return_std": 7.340198243172981,
+      "hit_mean": 0.9521522025479503,
+      "hit_std": 0.047172955647457986,
+      "n": 100
+    },
+    {
+      "method": "DTRL-On",
+      "success_rate": 0.98,
+      "return_mean": 7.4655,
+      "return_std": 0.6379,
+      "hit_mean": 0.9165,
+      "hit_std": 0.0356,
+      "n": 100
+    }
+  ]
+}
