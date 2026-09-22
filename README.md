@@ -1,12 +1,15 @@
 # DTRL: Reinforcement Learning Framework for Dynamic Time Requirements
 
-Official implementation and evaluation artifact for **DTRL: Reinforcement
+**DTRL: Reinforcement
 Learning Framework for Cyber-Physical Systems with Dynamic Time
-Requirements** (RTSS 2026).
+Requirements** (accepted at the 47th IEEE Real-Time Systems Symposium (RTSS 2026) ).
 
 **Authors:** Yufeng Yang, Dacheng Shen, and Mengyu Liu  
 School of Engineering and Applied Sciences, Washington State University
 Tri-Cities
+
+This repository contains the camera-ready paper, source code, evaluation
+artifacts, and real-robot experiment.
 
 **[📄 Read the Paper](paper/DTRL_RTSS26.pdf)** ·
 **[▶ Watch the Real-Robot Experiment](https://yufeng-yang.github.io/DTRL/real_robot.html)**
@@ -15,8 +18,8 @@ Tri-Cities
 
 We will present DTRL at the **47th IEEE Real-Time Systems Symposium (RTSS
 2026)** in Yokohama, Japan, on **Thursday, December 10, from 11:00 to
-12:30**. If you are attending RTSS 2026, we warmly invite you to join the
-oral session and discuss the work with us.
+12:30**. 
+If you are attending RTSS 2026, we warmly invite you to join the oral session and discuss the work with us. 🎉
 
 ![DTRL oral presentation schedule at RTSS 2026](assets/rtss2026_oral_schedule.png)
 
