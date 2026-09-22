@@ -22,7 +22,7 @@ You can find more details in [`README.md`](README.md).
 The artifact is organized as follows:
 
 ```text
- DTRL-RTSS26/
+ DTRL/
 ├── checkpoints/ # Training Logs and Checkpoints of all trained models
 ├── drawing/ # Read data directly from the evaluated results and plot it
 ├── figure_and_table/ # Save newly generated tables, figures, JSON, and CSV files
