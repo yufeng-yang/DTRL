@@ -8,6 +8,17 @@ Requirements** (RTSS 2026).
 School of Engineering and Applied Sciences, Washington State University
 Tri-Cities
 
+## RTSS 2026 oral presentation
+
+We will present DTRL at the **47th IEEE Real-Time Systems Symposium (RTSS
+2026)** in Yokohama, Japan, on **Thursday, December 10, from 11:00 to
+12:30**. If you are attending RTSS 2026, we warmly invite you to join the
+oral session and discuss the work with us.
+
+![DTRL oral presentation schedule at RTSS 2026](assets/rtss2026_oral_schedule.png)
+
+## Overview
+
 ![DTRL framework](assets/dtrl_framework.png)
 
 DTRL integrates early-exit policy networks into the control loop. At each
@@ -96,4 +107,3 @@ Full training runs can take several days depending on the task and hardware.
 No open-source license has been selected yet. Until a license is added, the
 authors retain all rights to the repository contents. Third-party components
 remain subject to their original licenses.
-
