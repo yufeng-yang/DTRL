@@ -8,6 +8,9 @@ Requirements** (RTSS 2026).
 School of Engineering and Applied Sciences, Washington State University
 Tri-Cities
 
+**[📄 Read the Paper](paper/DTRL_RTSS26.pdf)** ·
+**[▶ Watch the Real-Robot Experiment](https://yufeng-yang.github.io/DTRL-RTSS26/real_robot.html)**
+
 ## RTSS 2026 oral presentation
 
 We will present DTRL at the **47th IEEE Real-Time Systems Symposium (RTSS
