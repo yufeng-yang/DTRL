@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Real-robot comparison of DTRL and baseline methods on the Unitree Go2 platform.">
+    <title>DTRL Real-Robot Experiments</title>
+    <style>
+      :root {
+        color-scheme: dark;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        background: #0d1117;
+        color: #f0f6fc;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        background:
+          radial-gradient(circle at top, rgba(31, 111, 235, 0.2), transparent 34rem),
+          #0d1117;
+      }
+
+      main {
+        width: min(100% - 2rem, 70rem);
+        margin: 0 auto;
+        padding: 2rem 0 3rem;
+      }
+
+      a {
+        color: #58a6ff;
+      }
+
+      .back {
+        display: inline-block;
+        margin-bottom: 2rem;
+        text-decoration: none;
+      }
+
+      .intro {
+        max-width: 48rem;
+        margin: 0 auto 1.5rem;
+        text-align: center;
+      }
+
+      .eyebrow {
+        margin: 0 0 0.5rem;
+        color: #8cbeff;
+        font-size: 0.8rem;
+        font-weight: 700;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+      }
+
+      h1 {
+        margin: 0;
+        font-size: clamp(2rem, 5vw, 3.5rem);
+        line-height: 1.08;
+      }
+
+      .summary {
+        margin: 1rem auto 0;
+        color: #b1bac4;
+        font-size: 1.05rem;
+        line-height: 1.6;
+      }
+
+      .player {
+        width: min(100%, 30rem);
+        margin: 0 auto;
+        padding: 0.5rem;
+        overflow: hidden;
+        border: 1px solid #30363d;
+        border-radius: 1rem;
+        background: #161b22;
+        box-shadow: 0 1.5rem 4rem rgba(0, 0, 0, 0.38);
+      }
+
+      video {
+        display: block;
+        width: 100%;
+        aspect-ratio: 9 / 16;
+        border-radius: 0.65rem;
+        background: #000;
+      }
+
+      .note {
+        margin: 1rem auto 0;
+        color: #8b949e;
+        font-size: 0.9rem;
+        text-align: center;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <a class="back" href="./">&larr; Back to the DTRL repository</a>
+
+      <header class="intro">
+        <p class="eyebrow">RTSS 2026 · Real-Robot Experiments</p>
+        <h1>DTRL on Unitree Go2</h1>
+        <p class="summary">
+          A real-robot comparison of DTRL-On and DTRL-Off with the baseline
+          methods under dynamic inference-time requirements.
+        </p>
+      </header>
+
+      <div class="player">
+        <video controls playsinline preload="metadata">
+          <source src="assets/videos/real_robot_experiments.mp4" type="video/mp4">
+          Your browser does not support HTML5 video.
+        </video>
+      </div>
+
+      <p class="note">Use the player controls to enable sound or enter full-screen mode.</p>
+    </main>
+  </body>
+</html>

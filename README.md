@@ -32,9 +32,9 @@ checkpoints, and scripts used to reproduce the paper's computational results.
 The following video compares DTRL-On and DTRL-Off with the baseline methods on
 the Unitree Go2 platform. Click the preview to watch the complete experiment.
 
-[![Preview of the DTRL real-robot experiments](assets/real_robot_experiments_preview.jpg)](assets/videos/real_robot_experiments.mp4?raw=1)
+[![Preview of the DTRL real-robot experiments](assets/real_robot_experiments_preview.jpg)](https://yufeng-yang.github.io/DTRL-RTSS26/real_robot.html)
 
-[▶ Watch the full real-robot experiment video](assets/videos/real_robot_experiments.mp4?raw=1)
+[▶ Watch the full real-robot experiment video](https://yufeng-yang.github.io/DTRL-RTSS26/real_robot.html)
 
 ## Repository contents
 
