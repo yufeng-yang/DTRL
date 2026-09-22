@@ -1,4 +1,4 @@
-# DTRL: Reinforcement Learning for Dynamic Time Requirements
+# DTRL: Reinforcement Learning Framework for Dynamic Time Requirements
 
 Official implementation and evaluation artifact for **DTRL: Reinforcement
 Learning Framework for Cyber-Physical Systems with Dynamic Time
