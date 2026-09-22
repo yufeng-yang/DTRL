@@ -32,3 +32,6 @@ events.out.tfevents.*
 # Platform files
 .DS_Store
 Thumbs.db
+
+# Local source media (the web-compatible version is stored under assets/)
+/Real_robot.mp4
