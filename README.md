@@ -25,7 +25,11 @@ If you are attending RTSS 2026, we warmly invite you to join the oral session an
 
 ## Overview
 
-![DTRL framework](assets/dtrl_framework.png)
+<p align="center">
+  <img src="assets/dtrl_framework.png"
+       alt="DTRL framework"
+       width="70%">
+</p>
 
 DTRL integrates early-exit policy networks into the control loop. At each
 control step, a deterministic selector chooses the deepest exit whose online
